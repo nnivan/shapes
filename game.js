@@ -18,9 +18,21 @@ function Vector(_x, _y){
         this.y += vec2.y;
     }
 }
+var m = new Vector();
 
 function Shaper(){
     this.shape = [];
+
+    this.nodes_Clicker = [];
+    this.ClickShape = function ClickShape(add){
+        console.log(add);
+        if(this.nodes_Clicker.length<3 || (add.x-this.nodes_Clicker[0].x)*(add.x-this.nodes_Clicker[0].x)+(add.y-this.nodes_Clicker[0].y)*(add.y-this.nodes_Clicker[0].y)>20*20){
+            this.nodes_Clicker.push(add);
+        }else{
+            this.newShape(this.nodes_Clicker.length,this.nodes_Clicker);
+            this.nodes_Clicker = [];
+        }
+    }
 
     this.newShape = function newShape(_nodes,_edges,_color){
         var shape = {};
@@ -62,14 +74,18 @@ window.addEventListener("keydown", function (args) {
 }, false);
 
 window.addEventListener("keyup", function (args) {
-
 }, false);
 
+window.addEventListener("mouseup", function (args) {
+    Shapes.ClickShape(new Vector(args.x,args.y));
+}, false);
 window.addEventListener("mousemove", function (args) {
+    m.x = args.x;
+    m.y = args.y;
 }, false);
 
 var Shapes = new Shaper();
-Shapes.newShape(4 ,[ new Vector(50, 50), new Vector(10, 50), new Vector(10, 10), new Vector(50, 10)], "red");;
+Shapes.newShape(4 ,[ new Vector(50, 50), new Vector(10, 50), new Vector(10, 10), new Vector(50, 10)], "red");
 
 function update() {
 
@@ -81,6 +97,16 @@ function draw() {
     context.globalAlpha = 1;
 
     for(var i=0;i<Shapes.shape.length;i++) Shapes.drawShape(Shapes.shape[i]);
+
+    for(var i=0;i<Shapes.nodes_Clicker.length;i++){
+        context.beginPath();
+        for(var i=0;i<Shapes.nodes_Clicker.length;i++){
+            context.lineTo(Shapes.nodes_Clicker[i].x,Shapes.nodes_Clicker[i].y);
+        }
+        context.lineTo(m.x,m.y);
+        context.stroke();
+        context.closePath();
+    }
 
     requestAnimationFrame(draw);
 }
