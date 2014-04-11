@@ -45,13 +45,13 @@ function Shaper(){
     this.selecting = function selecting(shape){
     	var pres = 0;
     	for(var i=0;i<shape.length-1;i++){
-    		if(m.crossProduct(shape[i],shape[i+1])>=0 && (m.y > shape[i].y && m.y < shape[i+1].y)
-    		 ||m.crossProduct(shape[i],shape[i+1])<=0 && (m.y < shape[i].y && m.y > shape[i+1].y)){
+    		if(m.crossProduct(shape[i],shape[i+1])>=0 && (m.y >= shape[i].y && m.y <= shape[i+1].y)
+    		 ||m.crossProduct(shape[i],shape[i+1])<=0 && (m.y <= shape[i].y && m.y >= shape[i+1].y)){
     			pres++;
     		}
     	}
-		if(m.crossProduct(shape[0],shape[shape.length-1])>=0 && (m.y > shape[0].y && m.y < shape[shape.length-1].y)
-		 ||m.crossProduct(shape[0],shape[shape.length-1])<=0 && (m.y < shape[0].y && m.y > shape[shape.length-1].y)){
+		if(m.crossProduct(shape[0],shape[shape.length-1])>=0 && (m.y >= shape[0].y && m.y <= shape[shape.length-1].y)
+		 ||m.crossProduct(shape[0],shape[shape.length-1])<=0 && (m.y <= shape[0].y && m.y >= shape[shape.length-1].y)){
 			pres++;
 		}
     	return pres%2==0;
@@ -93,7 +93,7 @@ function Shaper(){
     }
 
     this.drawShape = function drawShape(shape){
-    	context.shadowBlur = 20;
+    	//context.shadowBlur = 20;
     	context.shadowColor = shape.color;
         context.beginPath();
         for(var i=0;i<shape.length;i++){
@@ -122,16 +122,21 @@ window.addEventListener("mousemove", function (args) {
 }, false);
 
 var S = new Shaper();
-S.newShape(4 ,[ new Vector(50, 50), new Vector(10, 50), new Vector(10, 10), new Vector(50, 10)], "red");
+S.newShape(4 ,[ new Vector(50, 50), new Vector(10, 10), new Vector(10, 50), new Vector(50, 10)], "red");
 S.newShape();
 
+	var lastLog = true;
 function update() {
 	var __isitcolide = true;
 	for(var i=0;i<S.shape.length;i++) 
 		if(S.selecting(S.shape[i])==false)
 			__isitcolide = false;
 
-	console.log(__isitcolide);
+	if(__isitcolide != lastLog){
+		if(__isitcolide) console.log("izleze");
+		else console.log("vleze");
+		lastLog = __isitcolide;
+	}
 	setTimeout(update, 50);
 }
 
