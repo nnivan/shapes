@@ -8,6 +8,7 @@ var canvas = document.getElementById("canvas-id");
 canvas.width = 800;
 canvas.height = 600;
 var context = canvas.getContext("2d");
+document.body.style.cursor = 'none';
 
 function Vector(_x, _y){
     this.x = _x;
@@ -25,8 +26,9 @@ function Shaper(){
 
     this.nodes_Clicker = [];
     this.ClickShape = function ClickShape(add){
-        console.log(add);
-        if(this.nodes_Clicker.length<3 || (add.x-this.nodes_Clicker[0].x)*(add.x-this.nodes_Clicker[0].x)+(add.y-this.nodes_Clicker[0].y)*(add.y-this.nodes_Clicker[0].y)>20*20){
+        //console.log(add);
+        if(this.nodes_Clicker.length<3 || (add.x-this.nodes_Clicker[0].x)*(add.x-this.nodes_Clicker[0].x)
+            +(add.y-this.nodes_Clicker[0].y)*(add.y-this.nodes_Clicker[0].y)>10*10){
             this.nodes_Clicker.push(add);
         }else{
             this.newShape(this.nodes_Clicker.length,this.nodes_Clicker);
@@ -37,9 +39,16 @@ function Shaper(){
     this.newShape = function newShape(_nodes,_edges,_color){
         var shape = {};
         if(_edges != undefined){
+            var consoled = ".newShape(" + _nodes + " ,[";
             shape = _edges;
+            for(var i=0;i<_edges.length;i++){
+                consoled+="new Vector("+_edges[i].x+", "+_edges[i].y+")";
+                if(i + 1 != _edges.length) consoled+=", ";
+            }
             if(_color == undefined) shape.color = prompt("color","red");
             else shape.color = _color;
+            consoled+="], " +'"'+ shape.color +'"' +");";
+            console.log(consoled);
             this.shape.push(shape);
         }else{
             var consoled = ".newShape(" + _nodes + " ,[";
@@ -52,7 +61,7 @@ function Shaper(){
                 if(i==0) consoled += " new Vector(" + a[0] + ", " + a[1] + ")";
                 else consoled += ", new Vector(" + a[0] + ", " + a[1] + ")"
             }
-            consoled+="]);";
+            consoled+="], "+ shape.color +");";
             console.log(consoled);
             this.shape.push(shape);
         }
@@ -95,6 +104,11 @@ function update() {
 function draw() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.globalAlpha = 1;
+
+    context.beginPath();
+    context.arc(m.x, m.y, 10, 0*Math.PI, 2*Math.PI);
+    context.stroke();
+    context.closePath();
 
     for(var i=0;i<Shapes.shape.length;i++) Shapes.drawShape(Shapes.shape[i]);
 
