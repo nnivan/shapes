@@ -92,7 +92,6 @@ function Shaper(){
 	                consoled+="new Vector("+_edges[i].x+", "+_edges[i].y+")";
 	                if(i + 1 != _edges.length) consoled+=", ";
 	            }
-	            consoled+="], " +'"'+ shape.color +'"' +");";
 	            console.log(consoled);
 	        }else{
 	            var consoled = "S.newShape(" + _nodes + " ,[";
@@ -103,11 +102,11 @@ function Shaper(){
 	                if(i==0) consoled += " new Vector(" + a[0] + ", " + a[1] + ")";
 	                else consoled += ", new Vector(" + a[0] + ", " + a[1] + ")"
 	            }
-	            consoled+="], "+'"'+ shape.color+'"'+");";
 	            console.log(consoled);
 	        }
             if(_color == undefined) shape.color = prompt("color","red");
             else shape.color = _color;
+            consoled+="], "+'"'+ shape.color+'"'+");";
             var _averagePoint = new Vector(0,0);
             for(var i = 0; i < shape.length; i++){
                 _averagePoint.add(shape[i]);
@@ -119,8 +118,8 @@ function Shaper(){
     }
 
     this.drawShape = function drawShape(shape){
-    	if(shape == this.select) context.shadowBlur = 20;
-        else context.shadowBlur = 10;
+    	if(shape == this.select) context.shadowBlur = 40;
+        else context.shadowBlur = 20;
     	context.shadowColor = shape.color;
         context.beginPath();
         for(var i=0;i<shape.length;i++){
@@ -162,29 +161,35 @@ window.addEventListener("mousemove", function (args) {
 }, false);
 
 var S = new Shaper();
-S.newShape(4 ,[ new Vector(50, 50), new Vector(100, 100), new Vector(100, 50), new Vector(50, 100)], "red");
-S.newShape();
+/*S.newShape(4 ,[ new Vector(50, 50), new Vector(100, 100), new Vector(100, 50), new Vector(50, 100)], "red");
+S.newShape();*/
+
+
+S.newShape(3 ,[ new Vector(300, 400), new Vector(200, 400), new Vector(200, 500)], "#900");
+S.newShape(4 ,[ new Vector(300, 100), new Vector(400, 100), new Vector(400, 300), new Vector(300, 400)], "#f00");
+S.newShape(4 ,[ new Vector(450, 400), new Vector(500, 400), new Vector(500, 500), new Vector(350, 500)], "#b00");
+S.newShape(5 ,[ new Vector(200, 500), new Vector(400, 300), new Vector(400, 400), new Vector(450, 400), new Vector(350, 500)], "#d00");
 
 	var lastLog = true;
 function update() {
     if(S.select != -1){
         if(isKeyPressed[81]){
-            S.rotate(S.select,-1);
+            S.rotate(S.select,-5);
         }
         if(isKeyPressed[69]){
-            S.rotate(S.select,1);
+            S.rotate(S.select,5);
         }
         if(isKeyPressed[87]){
-            S.move(S.select,new Vector(0,-2));
+            S.move(S.select,new Vector(0,-5));
         }
         if(isKeyPressed[83]){
-            S.move(S.select,new Vector(0,2));
+            S.move(S.select,new Vector(0,5));
         }
         if(isKeyPressed[65]){
-            S.move(S.select,new Vector(-2,0));
+            S.move(S.select,new Vector(-5,0));
         }
         if(isKeyPressed[68]){
-            S.move(S.select,new Vector(2,0));
+            S.move(S.select,new Vector(5,0));
         }
     }
 	/*var __isitcolide = true;
@@ -197,12 +202,14 @@ function update() {
 		else console.log("vleze");
 		lastLog = __isitcolide;
 	}*/
-	setTimeout(update, 20);
+	setTimeout(update, 50);
 }
 
 function draw() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "black";
+    context.fillRect(0, 0, canvas.width, canvas.height);
     context.globalAlpha = 1;
+    context.fillStyle = "white";
 
     for(var i=0;i<S.shape.length;i++) S.drawShape(S.shape[i]);
 
@@ -216,11 +223,23 @@ function draw() {
         context.closePath();
     }
 
+    context.fillStyle = "white";
+    for(var j=0;j<S.shape.length;j++){
+        for(var i=0;i<S.shape[j].length;i++){
+            context.beginPath();
+            context.arc(S.shape[j][i].x, S.shape[j][i].y, 3, 0, 2*Math.PI);
+            context.fill();
+            context.closePath();
+        }
+    }
+
+    context.fillStyle = "white";
+    context.strokeStyle = "white";
+
     context.beginPath();
     context.arc(m.x, m.y, 10, 0*Math.PI, 2*Math.PI);
     context.stroke();
     context.closePath();
-    context.fillStyle = "black";
     context.fillRect(m.x-1, m.y-1, 2, 2);
 
     if(S.isImDrawing){
