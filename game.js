@@ -99,7 +99,6 @@ function Shaper(){
 	                consoled+="new Vector("+_edges[i].x+", "+_edges[i].y+")";
 	                if(i + 1 != _edges.length) consoled+=", ";
 	            }
-	            console.log(consoled);
 	        }else{
 	            var consoled = "S.newShape(" + _nodes + " ,[";
 	            shape = [];
@@ -109,7 +108,6 @@ function Shaper(){
 	                if(i==0) consoled += " new Vector(" + a[0] + ", " + a[1] + ")";
 	                else consoled += ", new Vector(" + a[0] + ", " + a[1] + ")"
 	            }
-	            console.log(consoled);
 	        }
             if(_color == undefined) shape.color = prompt("color","red");
             else shape.color = _color;
@@ -120,6 +118,7 @@ function Shaper(){
             }
             shape.averagePoint = new Vector(_averagePoint.x/shape.length, _averagePoint.y/shape.length);
             //console.log(shape.averagePoint);
+            console.log(consoled);
             this.shape.push(shape);
 	    }
     }
@@ -146,7 +145,7 @@ window.addEventListener("keydown", function (args) {
 
 window.addEventListener("keyup", function (args) {
     isKeyPressed[args.keyCode] = false;
-    
+
     if(S.select != -1){
         if(args.keyCode==32){
             S.OSrotate(S.select);
