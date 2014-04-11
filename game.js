@@ -58,6 +58,13 @@ function Shaper(){
     	return pres%2!=0;
     }
 
+    this.OSrotate = function OSrotate(shape){
+        for(var i=0;i<shape.length;i++){
+            shape[i].x = shape[i].x + 2*(shape.averagePoint.x - shape[i].x);
+            //shape[i].y = shape[i].y + 2*(shape.averagePoint.y - shape[i].y);
+        }
+    }
+
     this.rotate = function rotate(shape,angle){
         var rad = angle * Math.PI / 180;
         //console.log(shape);
@@ -139,6 +146,13 @@ window.addEventListener("keydown", function (args) {
 
 window.addEventListener("keyup", function (args) {
     isKeyPressed[args.keyCode] = false;
+    
+    if(S.select != -1){
+        if(args.keyCode==32){
+            S.OSrotate(S.select);
+        }
+    }
+
 }, false);
 
 window.addEventListener("mouseup", function (args) {
@@ -170,7 +184,7 @@ S.newShape(4 ,[ new Vector(300, 100), new Vector(400, 100), new Vector(400, 300)
 S.newShape(4 ,[ new Vector(450, 400), new Vector(500, 400), new Vector(500, 500), new Vector(350, 500)], "#b00");
 S.newShape(5 ,[ new Vector(200, 500), new Vector(400, 300), new Vector(400, 400), new Vector(450, 400), new Vector(350, 500)], "#d00");
 
-	var lastLog = true;
+var lastLog = true;
 function update() {
     if(S.select != -1){
         if(isKeyPressed[81]){
