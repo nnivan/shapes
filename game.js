@@ -24,6 +24,7 @@ function Vector(_x, _y){
     }
 }
 var m = new Vector();
+var mScrol = -1;
 
 function Shaper(){
     this.shape = [];
@@ -51,8 +52,8 @@ function Shaper(){
     			pres++;
     		}
     	}
-		if(m.crossProduct(shape[0],shape[shape.length-1])>=0 && (m.y >= shape[0].y && m.y <= shape[shape.length-1].y)
-		 ||m.crossProduct(shape[0],shape[shape.length-1])<=0 && (m.y <= shape[0].y && m.y >= shape[shape.length-1].y)){
+		if(m.crossProduct(shape[0],shape[shape.length-1])>=0 && (m.y >= shape[0].y && m.y<=shape[shape.length-1].y)
+		 ||m.crossProduct(shape[0],shape[shape.length-1])<=0 && (m.y <= shape[0].y && m.y>=shape[shape.length-1].y)){
 			pres++;
 		}
     	return pres%2!=0;
@@ -69,8 +70,10 @@ function Shaper(){
         var rad = angle * Math.PI / 180;
         //console.log(shape);
         for(var i=0;i<shape.length;i++){
-            var rotX = (shape[i].x - shape.averagePoint.x) * Math.cos(rad) - (shape[i].y - shape.averagePoint.y) * Math.sin(rad);
-            var rotY = (shape[i].x - shape.averagePoint.x) * Math.sin(rad) + (shape[i].y - shape.averagePoint.y) * Math.cos(rad);
+            var rotX = (shape[i].x - shape.averagePoint.x) * Math.cos(rad) -
+             (shape[i].y - shape.averagePoint.y) * Math.sin(rad);
+            var rotY = (shape[i].x - shape.averagePoint.x) * Math.sin(rad) +
+             (shape[i].y - shape.averagePoint.y) * Math.cos(rad);
             
             shape[i].x = rotX + shape.averagePoint.x;
             shape[i].y = rotY + shape.averagePoint.y;
@@ -124,9 +127,13 @@ function Shaper(){
     }
 
     this.drawShape = function drawShape(shape){
-    	if(shape == this.select) context.shadowBlur = 40;
-        else context.shadowBlur = 20;
-    	context.shadowColor = shape.color;
+    	if(shape == this.select){
+    		context.shadowColor = "white";
+    		context.shadowBlur = 40;
+    	}else{
+    		context.shadowColor = shape.color;
+    		context.shadowBlur = 20;
+    	}
         context.beginPath();
         for(var i=0;i<shape.length;i++){
             context.lineTo(shape[i].x,shape[i].y);
@@ -154,7 +161,25 @@ window.addEventListener("keyup", function (args) {
 
 }, false);
 
+window.addEventListener("mousedown", function (args) {
+	if(mScrol == -1){
+		mScrol = new Vector(args.x, args.y);
+	}
+}, false);
+window.addEventListener("mousemove", function (args) {
+    m.x = args.x;
+    m.y = args.y;
+    if(mScrol != -1){
+		if(S.select != -1){
+			console.log(m,mScrol);
+			S.move(S.select,new Vector(m.x - mScrol.x, m.y - mScrol.y));
+			mScrol.x = m.x;
+			mScrol.y = m.y;
+		}
+	}
+}, false);
 window.addEventListener("mouseup", function (args) {
+	mScrol = -1;
     if(S.isImDrawing){
         S.ClickShape(new Vector(args.x,args.y));
     }else{
@@ -165,12 +190,10 @@ window.addEventListener("mouseup", function (args) {
                 s = true;
             }
         }
-        if(!s) S.select = -1;;
+        if(!s){
+        	S.select = -1;
+        }
     }
-}, false);
-window.addEventListener("mousemove", function (args) {
-    m.x = args.x;
-    m.y = args.y;
 }, false);
 
 var S = new Shaper();
@@ -181,28 +204,29 @@ S.newShape();*/
 S.newShape(3 ,[ new Vector(300, 400), new Vector(200, 400), new Vector(200, 500)], "#900");
 S.newShape(4 ,[ new Vector(300, 100), new Vector(400, 100), new Vector(400, 300), new Vector(300, 400)], "#f00");
 S.newShape(4 ,[ new Vector(450, 400), new Vector(500, 400), new Vector(500, 500), new Vector(350, 500)], "#b00");
-S.newShape(5 ,[ new Vector(200, 500), new Vector(400, 300), new Vector(400, 400), new Vector(450, 400), new Vector(350, 500)], "#d00");
+S.newShape(5 ,[ new Vector(200, 500), new Vector(400, 300),
+ new Vector(400, 400), new Vector(450, 400), new Vector(350, 500)], "#d00");
 
 var lastLog = true;
 function update() {
     if(S.select != -1){
         if(isKeyPressed[81]){
-            S.rotate(S.select,-5);
+            S.rotate(S.select,-1);
         }
         if(isKeyPressed[69]){
-            S.rotate(S.select,5);
+            S.rotate(S.select,1);
         }
         if(isKeyPressed[87]){
-            S.move(S.select,new Vector(0,-5));
+            S.move(S.select,new Vector(0,-1));
         }
         if(isKeyPressed[83]){
-            S.move(S.select,new Vector(0,5));
+            S.move(S.select,new Vector(0,1));
         }
         if(isKeyPressed[65]){
-            S.move(S.select,new Vector(-5,0));
+            S.move(S.select,new Vector(-1,0));
         }
         if(isKeyPressed[68]){
-            S.move(S.select,new Vector(5,0));
+            S.move(S.select,new Vector(1,0));
         }
     }
 	/*var __isitcolide = true;
@@ -215,7 +239,7 @@ function update() {
 		else console.log("vleze");
 		lastLog = __isitcolide;
 	}*/
-	setTimeout(update, 50);
+	setTimeout(update, 10);
 }
 
 function draw() {
@@ -225,6 +249,7 @@ function draw() {
     context.fillStyle = "white";
 
     for(var i=0;i<S.shape.length;i++) S.drawShape(S.shape[i]);
+    	S.drawShape(S.select);
 
     for(var i=0;i<S.nodes_Clicker.length;i++){
         context.beginPath();
