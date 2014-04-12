@@ -58,10 +58,16 @@ function Shaper(){
     	return pres%2!=0;
     }
 
-    this.OSrotate = function OSrotate(shape){
+    this.OSrotateX = function OSrotateX(shape){
         for(var i=0;i<shape.length;i++){
             shape[i].x = shape[i].x + 2*(shape.averagePoint.x - shape[i].x);
             //shape[i].y = shape[i].y + 2*(shape.averagePoint.y - shape[i].y);
+        }
+    }
+    this.OSrotateY = function OSrotateX(shape){
+        for(var i=0;i<shape.length;i++){
+            //shape[i].x = shape[i].x + 2*(shape.averagePoint.x - shape[i].x);
+            shape[i].y = shape[i].y + 2*(shape.averagePoint.y - shape[i].y);
         }
     }
 
@@ -148,12 +154,16 @@ window.addEventListener("keyup", function (args) {
 
     if(S.select != -1){
         if(args.keyCode==32){
-            S.OSrotate(S.select);
+            S.OSrotateX(S.select);
         }
     }
 
 }, false);
 
+window.addEventListener("mousedown", function (args) {
+    m.x = args.x;
+    m.y = args.y;
+}, false);
 window.addEventListener("mouseup", function (args) {
     if(S.isImDrawing){
         S.ClickShape(new Vector(args.x,args.y));
@@ -215,7 +225,7 @@ function update() {
 		else console.log("vleze");
 		lastLog = __isitcolide;
 	}*/
-	setTimeout(update, 50);
+	setTimeout(update, 75);
 }
 
 function draw() {
