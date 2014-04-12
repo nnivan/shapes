@@ -44,16 +44,18 @@ function Shaper(){
         }
     }
 
-    this.isItColide = function isItColide(shape){
+    this.isItColide = function isItColide(shape,vec){
     	var pres = 0;
     	for(var i=0;i<shape.length-1;i++){
-    		if(m.crossProduct(shape[i],shape[i+1])>=0 && (m.y >= shape[i].y && m.y <= shape[i+1].y)
-    		 ||m.crossProduct(shape[i],shape[i+1])<=0 && (m.y <= shape[i].y && m.y >= shape[i+1].y)){
+    		if(vec.crossProduct(shape[i],shape[i+1])>=0 && (vec.y >= shape[i].y && vec.y <= shape[i+1].y)
+    		 ||vec.crossProduct(shape[i],shape[i+1])<=0 && (vec.y <= shape[i].y && vec.y >= shape[i+1].y)){
     			pres++;
     		}
     	}
-		if(m.crossProduct(shape[0],shape[shape.length-1])>=0 && (m.y >= shape[0].y && m.y<=shape[shape.length-1].y)
-		 ||m.crossProduct(shape[0],shape[shape.length-1])<=0 && (m.y <= shape[0].y && m.y>=shape[shape.length-1].y)){
+		if(vec.crossProduct(shape[0],shape[shape.length-1])>=0 &&
+		 (vec.y >= shape[0].y && vec.y<=shape[shape.length-1].y)
+		 ||vec.crossProduct(shape[0],shape[shape.length-1])<=0 &&
+		  (vec.y <= shape[0].y && vec.y>=shape[shape.length-1].y)){
 			pres++;
 		}
     	return pres%2!=0;
@@ -129,10 +131,10 @@ function Shaper(){
     this.drawShape = function drawShape(shape){
     	if(shape == this.select){
     		context.shadowColor = "white";
-    		context.shadowBlur = 40;
+    		context.shadowBlur = 20;
     	}else{
     		context.shadowColor = shape.color;
-    		context.shadowBlur = 20;
+    		context.shadowBlur = 10;
     	}
         context.beginPath();
         for(var i=0;i<shape.length;i++){
@@ -165,27 +167,13 @@ window.addEventListener("mousedown", function (args) {
 	if(mScrol == -1){
 		mScrol = new Vector(args.x, args.y);
 	}
-}, false);
-window.addEventListener("mousemove", function (args) {
-    m.x = args.x;
-    m.y = args.y;
-    if(mScrol != -1){
-		if(S.select != -1){
-			console.log(m,mScrol);
-			S.move(S.select,new Vector(m.x - mScrol.x, m.y - mScrol.y));
-			mScrol.x = m.x;
-			mScrol.y = m.y;
-		}
-	}
-}, false);
-window.addEventListener("mouseup", function (args) {
-	mScrol = -1;
+
     if(S.isImDrawing){
         S.ClickShape(new Vector(args.x,args.y));
     }else{
         var s = false;
         for(var i=0;i<S.shape.length;i++){
-            if(S.isItColide(S.shape[i])){
+            if(S.isItColide(S.shape[i],m)){
                 S.select = S.shape[i];
                 s = true;
             }
@@ -194,6 +182,42 @@ window.addEventListener("mouseup", function (args) {
         	S.select = -1;
         }
     }
+}, false);
+window.addEventListener("mousemove", function (args) {
+    m.x = args.x;
+    m.y = args.y;
+    if(mScrol != -1){
+    	if(S.select != -1){
+			if(S.isItColide(S.select, mScrol)){
+					if(S.select != -1){
+					//console.log(m,mScrol);
+						S.move(S.select,new Vector(m.x - mScrol.x, m.y - mScrol.y));
+						mScrol.x = m.x;
+						mScrol.y = m.y;
+				}
+			}
+		}
+	}
+}, false);
+window.addEventListener("scrolldown", function (args) {
+	console.log(args);
+}, false);
+window.addEventListener("mouseup", function (args) {
+	mScrol = -1;
+    /*if(S.isImDrawing){
+        S.ClickShape(new Vector(args.x,args.y));
+    }else{
+        var s = false;
+        for(var i=0;i<S.shape.length;i++){
+            if(S.isItColide(S.shape[i],m)){
+                S.select = S.shape[i];
+                s = true;
+            }
+        }
+        if(!s){
+        	S.select = -1;
+        }
+    }*/
 }, false);
 
 var S = new Shaper();
