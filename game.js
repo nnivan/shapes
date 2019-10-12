@@ -28,7 +28,7 @@ var mScrol = -1;
 
 function Shaper(){
     this.shape = [];
-    this.isImDrawing = false;
+    this.amIDrawing = false;
     this.select;
 
     this.nodes_Clicker = [];
@@ -40,7 +40,7 @@ function Shaper(){
         }else{
             this.newShape(this.nodes_Clicker.length,this.nodes_Clicker);
             this.nodes_Clicker = [];
-            this.isImDrawing = false;
+            this.amIDrawing = false;
         }
     }
 
@@ -93,7 +93,7 @@ function Shaper(){
     this.newShape = function newShape(_nodes,_edges,_color){
         S.select = -1;;
         if(_nodes==undefined){
-            this.isImDrawing = true;
+            this.amIDrawing = true;
             return 1;
         }else{
             var shape = {};
@@ -168,7 +168,7 @@ window.addEventListener("mousedown", function (args) {
         mScrol = new Vector(args.x, args.y);
     }
 
-    if(S.isImDrawing){
+    if(S.amIDrawing){
         S.ClickShape(new Vector(args.x,args.y));
     }else{
         var s = false;
@@ -204,7 +204,7 @@ window.addEventListener("scrolldown", function (args) {
 }, false);
 window.addEventListener("mouseup", function (args) {
     mScrol = -1;
-    /*if(S.isImDrawing){
+    /*if(S.amIDrawing){
         S.ClickShape(new Vector(args.x,args.y));
     }else{
         var s = false;
@@ -304,7 +304,7 @@ function draw() {
     context.closePath();
     context.fillRect(m.x-1, m.y-1, 2, 2);
 
-    if(S.isImDrawing){
+    if(S.amIDrawing){
         context.beginPath();
         context.arc(m.x, m.y, 6, 0*Math.PI, 0.5*Math.PI);
         context.stroke();
